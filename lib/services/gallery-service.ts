@@ -45,8 +45,8 @@ export async function createGalleryFromFolder(
     const userPrefix = userId.substring(0, 4)
     const shareId = generateUniqueId(12, userPrefix)
 
-    // Stelle sicher, dass die APP_URL korrekt ist
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || ""
+    // Hardcoded APP_URL
+    const appUrl = "https://v0-uploader34.vercel.app"
     // Verwende immer /s/ für Share-Links
     const shareLink = `${appUrl}/s/${shareId}`
 
@@ -498,8 +498,8 @@ export async function regenerateShareLink(
     const userPrefix = userId.substring(0, 4)
     const shareId = generateUniqueId(12, userPrefix)
 
-    // Stelle sicher, dass die APP_URL korrekt ist
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || ""
+    // Hardcoded APP_URL
+    const appUrl = "https://v0-uploader34.vercel.app"
     // Korrigiere die URL-Struktur - verwende immer /s/ für Share-Links
     const shareLink = `${appUrl}/s/${shareId}`
 
@@ -819,70 +819,3 @@ export async function getGalleryStatistics(galleryId: string): Promise<GallerySt
         galleryId,
         totalViews: data.totalViews || 0,
         uniqueVisitors: data.uniqueVisitors || 0,
-        lastVisited: data.lastVisited?.toDate() || new Date(),
-        dailyViews: data.dailyViews || [],
-      }
-    }
-
-    return null
-  } catch (error) {
-    console.error("Fehler beim Abrufen der Galerie-Statistiken:", error)
-    return null
-  }
-}
-
-// Funktion zum Hinzufügen eines Kommentars
-export async function addGalleryComment(
-  galleryId: string,
-  fileId: string,
-  author: string,
-  content: string,
-): Promise<{ success: boolean; commentId?: string; error?: string }> {
-  try {
-    const commentRef = await addDoc(collection(db, "galleryComments"), {
-      galleryId,
-      fileId,
-      author,
-      content,
-      createdAt: serverTimestamp(),
-    })
-
-    return { success: true, commentId: commentRef.id }
-  } catch (error: any) {
-    console.error("Fehler beim Hinzufügen des Kommentars:", error)
-    return { success: false, error: handleFirebaseError(error) }
-  }
-}
-
-// Funktion zum Abrufen von Kommentaren für ein Bild
-export async function getFileComments(galleryId: string, fileId: string): Promise<GalleryComment[]> {
-  try {
-    const commentsQuery = query(
-      collection(db, "galleryComments"),
-      where("galleryId", "==", galleryId),
-      where("fileId", "==", fileId),
-      orderBy("createdAt", "desc"),
-    )
-
-    const querySnapshot = await getDocs(commentsQuery)
-    const comments: GalleryComment[] = []
-
-    querySnapshot.forEach((doc) => {
-      const data = doc.data()
-      comments.push({
-        id: doc.id,
-        galleryId: data.galleryId,
-        fileId: data.fileId,
-        author: data.author,
-        content: data.content,
-        createdAt: data.createdAt?.toDate() || new Date(),
-      })
-    })
-
-    return comments
-  } catch (error) {
-    console.error("Fehler beim Abrufen der Kommentare:", error)
-    return []
-  }
-}
-
