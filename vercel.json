@@ -8,15 +8,5 @@
     "deploymentEnabled": {
       "main": true
     }
-  },
-  "env": {
-    "NEXT_PUBLIC_FIREBASE_API_KEY": "AIzaSyDJxEkRwyOsxjQbQEUdIJDa-Em3MNLkcR4",
-    "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN": "qr-photobooth-c48c1.firebaseapp.com",
-    "NEXT_PUBLIC_FIREBASE_PROJECT_ID": "qr-photobooth-c48c1",
-    "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET": "qr-photobooth-c48c1.firebasestorage.app",
-    "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "925393786405",
-    "NEXT_PUBLIC_FIREBASE_APP_ID": "1:925393786405:web:6a9837bbc2e976941d51cc",
-    "NEXT_PUBLIC_SITE_URL": "https://v0-uploader34.vercel.app",
-    "FIREBASE_DATABASE_URL": "https://qr-photobooth-c48c1.firebaseio.com"
   }
 }
