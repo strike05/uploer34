@@ -5,12 +5,12 @@ import { getFirestore } from "firebase/firestore"
 
 // Your Firebase configuration
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: "AIzaSyDJxEkRwyOsxjQbQEUdIJDa-Em3MNLkcR4",
+  authDomain: "qr-photobooth-c48c1.firebaseapp.com",
+  projectId: "qr-photobooth-c48c1",
+  storageBucket: "qr-photobooth-c48c1.firebasestorage.app",
+  messagingSenderId: "925393786405",
+  appId: "1:925393786405:web:6a9837bbc2e976941d51cc",
 }
 
 // Initialize Firebase
@@ -27,4 +27,3 @@ if (typeof window !== "undefined") {
 }
 
 export { app, auth, storage, db }
-
