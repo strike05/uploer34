@@ -1,0 +1,13 @@
+# Firebase-Abhängigkeiten
+pyrebase4>=4.7.1
+
+# GUI-Abhängigkeiten
+PyQt6>=6.5.0
+
+# Verschlüsselung
+cryptography>=41.0.0
+
+# Hilfsbibliotheken
+requests>=2.31.0
+python-dotenv>=1.0.0
+

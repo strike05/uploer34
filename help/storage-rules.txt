@@ -1,0 +1,120 @@
+// Storage Rules für das Dateiverwaltungssystem mit direktem SDK-Upload, Galerie-Funktionalität und direktem Dateizugriff
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Hilfsfunktion zur Überprüfung der Authentifizierung
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Hilfsfunktion zur Überprüfung, ob der Benutzer Eigentümer ist
+    function isPathOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Hilfsfunktion zur Überprüfung, ob der Benutzer ein Administrator ist
+    function isAdmin() {
+      return isAuthenticated() && 
+             (
+               // Prüfe, ob die E-Mail-Adresse mit @kreativ-style.de endet
+               (request.auth.token.email != null && request.auth.token.email.matches(".*@kreativ-style\\.de$")) || 
+               // ODER prüfe über die Metadaten, ob es eine Admin-Aktion ist
+               (request.resource.metadata != null && request.resource.metadata.adminAction == true)
+             );
+    }
+    
+    // Hilfsfunktion um Dateitypen zu validieren
+    function isAllowedFileType(contentType) {
+      // Erlaubte Dateitypgruppen
+      return contentType.matches('image/.*') || 
+             contentType.matches('video/.*') || 
+             contentType.matches('audio/.*') || 
+             contentType.matches('application/pdf') ||
+             contentType.matches('application/.?zip') ||
+             contentType.matches('application/.*document') ||
+             contentType.matches('text/.*');
+    }
+    
+    // Hilfsfunktion um Dateigröße zu validieren
+    function isAllowedSize(size) {
+      // Standardmäßig 100MB als Maximalgröße
+      return size <= 100 * 1024 * 1024;
+    }
+    
+    // Benutzerverzeichnis: Erlaubt Lesen für alle, Schreiben nur für den Eigentümer
+    // Pfadformat: /users/{userId}/...
+    match /users/{userId}/{allPaths=**} {
+      // Erlaubt Lesen für alle - wichtig für öffentliche Galerien und direkten Dateizugriff
+      allow read: if true;
+      
+      // Erlaubt Schreiben nur für den Eigentümer oder authentifizierte Benutzer
+      allow write: if isPathOwner(userId) || isAdmin();
+      
+      // Zugriff auf Metadaten für alle
+      allow get, list: if true;
+    }
+    
+    // Öffentliche Galerien: Erlaubt Lesen für alle
+    match /galleries/{galleryId}/{allPaths=**} {
+      allow read: if true;
+      
+      // Überprüfe Dateityp, Größe und Benutzer-ID beim Hochladen
+      allow write: if isAuthenticated() && 
+                   isAllowedFileType(request.resource.contentType) && 
+                   isAllowedSize(request.resource.size) &&
+                   request.resource.metadata.userId == request.auth.uid;
+    }
+    
+    // Temporäre Uploads mit direkter URL
+    match /temp/{userId}/{allPaths=**} {
+      // Lesezugriff nur für Eigentümer und Admins
+      allow read: if isPathOwner(userId) || isAdmin();
+      
+      // Schreibzugriff für authentifizierte Benutzer mit Validierung
+      allow write: if isAuthenticated() && 
+                   isAllowedFileType(request.resource.contentType) && 
+                   isAllowedSize(request.resource.size);
+                   
+      // Automatisches Löschen nach 24 Stunden über eine Cloud Function
+    }
+    
+    // Öffentliche Dateien: Erlaubt Lesen für alle - wichtig für direkten Dateizugriff
+    match /public/{allPaths=**} {
+      allow read: if true;
+      
+      // Schreibzugriff für authentifizierte Benutzer mit Validierung
+      allow write: if isAuthenticated() && 
+                   isAllowedFileType(request.resource.contentType) && 
+                   isAllowedSize(request.resource.size);
+    }
+    
+    // Wasserzeichen und Vorlagen - nur Lesen für alle, Schreiben für Admins
+    match /watermarks/{allPaths=**} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // CORS-Konfiguration für direkten Dateizugriff
+    match /{allPaths=**} {
+      // Erlaubt OPTIONS-Anfragen für CORS
+      allow read: if request.method == 'OPTIONS';
+    }
+    
+    // Backup-Bereich - nur für Administratoren
+    match /backups/{allPaths=**} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Admin-Zugriff auf alle Dateien
+    match /{allPaths=**} {
+      // Lesezugriff für alle
+      allow read: if true;
+      
+      // Administratoren haben vollen Schreibzugriff auf alle Dateien
+      allow write: if isAuthenticated() && 
+                   (isAdmin() || 
+                   (request.resource.metadata != null && 
+                   request.resource.metadata.userId == request.auth.uid));
+    }
+  }
+}
