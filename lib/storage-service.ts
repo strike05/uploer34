@@ -96,9 +96,8 @@ export async function uploadFile(userId: string, folderId: string, file: File) {
     // Importiere die Konfiguration für direkte URLs
     const { FILE_CONFIG } = await import("../config/file")
 
-    if (!process.env.NEXT_PUBLIC_APP_URL) {
-      throw new Error("NEXT_PUBLIC_APP_URL ist nicht konfiguriert")
-    }
+    // Hardcoded APP_URL
+    const appUrl = "https://v0-uploader34.vercel.app"
 
     // Erstelle die direkte URL
     const directUrl = FILE_CONFIG.directFileUrlPattern(folderId, file.name)
@@ -252,4 +251,3 @@ export async function deleteFolder(userId: string, folderId: string) {
     return { success: false, error }
   }
 }
-

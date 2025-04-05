@@ -2,7 +2,7 @@
 // Zentrale Konfigurationsdatei für die Anwendung
 
 // Basis-URL der Anwendung
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+const APP_URL = "https://v0-uploader34.vercel.app"
 
 // API-Basis-URL
 export const API_URL = `${APP_URL}/api`
@@ -65,4 +65,3 @@ export const SUBSCRIPTION_CONFIG = {
     },
   },
 }
-
