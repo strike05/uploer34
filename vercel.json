@@ -2,9 +2,7 @@
   "buildCommand": "pnpm run build",
   "installCommand": "pnpm install",
   "framework": "nextjs",
-  "envVarPrefix": "NEXT_PUBLIC_",
   "outputDirectory": ".next",
-  "buildCommand": "pnpm run build",
   "regions": ["fra1"],
   "git": {
     "deploymentEnabled": {
