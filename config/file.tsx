@@ -3,7 +3,7 @@ export const FILE_CONFIG = {
     // Stelle sicher, dass die URL korrekt formatiert ist
     const baseUrl = typeof window !== 'undefined' 
       ? window.location.origin 
-      : process.env.NEXT_PUBLIC_APP_URL || ""
+      : "https://v0-uploader34.vercel.app"
       
     // Verwende api/direct/ Route für Datei-Zugriff
     return `${baseUrl}/api/direct/${folderId}/${encodeURIComponent(fileName)}`
@@ -23,4 +23,3 @@ export const FILE_CONFIG = {
     controlBarPosition: "attached",
   },
 }
-
